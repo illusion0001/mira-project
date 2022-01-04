@@ -1,10 +1,6 @@
 name: Orbis672
 
-on:
-  push:
-    branches: [ master, develop ]
-  pull_request:
-    branches: [ master, develop ]
+on: [push]
 
 jobs:
   build:
@@ -32,7 +28,7 @@ jobs:
       - name: make 6.72 elf
         run: cd kernel; MIRA_PLATFORM=MIRA_PLATFORM_ORBIS_BSD_672 ADD_GIT_HASH=TRUE MIRA_CHECKS=TRUE pvs-studio-analyzer trace -- make
       - name: rename 6.72 elf to bin
-        run: rename kernel/build/Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_672.elf kernel/build/Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_672.bin
+        run: mv kernel/build/Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_672.elf kernel/build/Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_672.bin
       - name: Upload 6.72 elfs
         uses: actions/upload-artifact@v2
         with:
