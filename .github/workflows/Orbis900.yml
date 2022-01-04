@@ -1,0 +1,44 @@
+name: Orbis900
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+        # Checkout the repository
+      - uses: actions/checkout@v2
+        # Install required stuff needed to build Mira
+      - name: preinstall
+        run: wget -q -O - https://files.viva64.com/etc/pubkey.txt | sudo apt-key add -; sudo wget -O /etc/apt/sources.list.d/viva64.list https://files.viva64.com/etc/viva64.list; sudo apt-get update; sudo apt install build-essential git clang lldb clang-tidy clang-tools cppcheck pvs-studio
+        # Handle loader crap
+      - name: create loader directories
+        run: cd loader; MIRA_PLATFORM=MIRA_PLATFORM_ORBIS_BSD_900 make create
+      - name: clean loader
+        run: cd loader; MIRA_PLATFORM=MIRA_PLATFORM_ORBIS_BSD_900 make clean
+      - name: create mira directories
+        run: cd kernel; MIRA_PLATFORM=MIRA_PLATFORM_ORBIS_BSD_900 make create
+      - name: clean mira
+        run: cd kernel; MIRA_PLATFORM=MIRA_PLATFORM_ORBIS_BSD_900 make clean
+        # 9.00 Support
+      - name: make 9.00 loader
+        run: cd loader; MIRA_PLATFORM=MIRA_PLATFORM_ORBIS_BSD_900 MIRA_CHECKS=TRUE pvs-studio-analyzer trace -- make
+      - name: make 9.00 elf
+        run: cd kernel; MIRA_PLATFORM=MIRA_PLATFORM_ORBIS_BSD_900 ADD_GIT_HASH=TRUE MIRA_CHECKS=TRUE pvs-studio-analyzer trace -- make
+      - name: Upload 9.00 loader
+        uses: actions/upload-artifact@v2
+        with:
+          name: MiraLoader_Orbis_MIRA_PLATFORM_ORBIS_BSD_900.bin
+          path: loader/build/MiraLoader_Orbis_MIRA_PLATFORM_ORBIS_BSD_900.bin
+
+      - name: Upload 9.00 elf
+        uses: actions/upload-artifact@v2
+        with:
+          name: Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_900.elf
+          path: kernel/build/Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_900.elf
