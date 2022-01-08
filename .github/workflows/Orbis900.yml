@@ -28,11 +28,13 @@ jobs:
       - name: make 9.00 elf
         run: cd kernel; MIRA_PLATFORM=MIRA_PLATFORM_ORBIS_BSD_900 ADD_GIT_HASH=TRUE MIRA_CHECKS=TRUE pvs-studio-analyzer trace -- make
       - name: rename 9.00 bin
-        run: mv kernel/build/Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_900.elf kernel/build/Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_900.bin
+        run: | 
+          mv loader/build/MiraLoader_Orbis_MIRA_PLATFORM_ORBIS_BSD_900.bin MiraLoader_Orbis_MIRA_PLATFORM_ORBIS_BSD_900.bin
+          mv kernel/build/Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_900.elf Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_900.elf
       - name: Upload 9.00 elfs
         uses: actions/upload-artifact@v2
         with:
           name: Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_900
           path: |
-            loader/build/MiraLoader_Orbis_MIRA_PLATFORM_ORBIS_BSD_900.bin
-            kernel/build/Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_900.bin
+            MiraLoader_Orbis_MIRA_PLATFORM_ORBIS_BSD_900.bin
+            Mira_Orbis_MIRA_PLATFORM_ORBIS_BSD_900.elf
